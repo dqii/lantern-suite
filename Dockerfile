@@ -1,9 +1,9 @@
 ARG PG_VERSION=15
-ARG OS_ARCH=amd64
 
 FROM postgres:$PG_VERSION-bookworm
 ARG PG_VERSION
-ARG OS_ARCH
+ARG TARGETARCH
+ENV OS_ARCH="${TARGETARCH:-amd64}"
 
 RUN apt update && apt install -y curl wget make jq
 
