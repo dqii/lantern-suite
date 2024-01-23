@@ -40,10 +40,9 @@ RUN cd /tmp && \
     ldconfig
 
 # Install Libssl
-RUN cd /tmp && \
-    wget http://http.us.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_amd64.deb && \
-    dpkg -i libssl1.1_1.1.1w-0+deb11u1_amd64.deb && \
-    rm -rf libssl1.1_1.1.1w-0+deb11u1_amd64.deb
+RUN apt-get update && \
+    apt-get install -y libssl3 && \
+    rm -rf /var/lib/apt/lists/*
 
 # Cleanup
 RUN apt-get autoremove --purge -y curl wget make && \
