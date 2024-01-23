@@ -1,9 +1,12 @@
 ARG PG_VERSION=15
+ARG OS_ARCH=arm64
 
 FROM postgres:$PG_VERSION-bookworm
 ARG PG_VERSION
+ARG OS_ARCH
 
 RUN apt update && apt install -y curl wget make jq
+
 # Install Lantern
 RUN cd /tmp && \
     LANTERN_VERSION=$(curl -s "https://api.github.com/repos/lanterndata/lantern/releases/latest" | jq ".tag_name" | sed 's/"//g') && \
@@ -40,9 +43,10 @@ RUN cd /tmp && \
     ldconfig
 
 # Install Libssl
-RUN apt-get update && \
-    apt-get install -y libssl3 && \
-    rm -rf /var/lib/apt/lists/*
+RUN cd /tmp && \
+    wget "http://http.us.debian.org/debian/pool/main/o/openssl/libssl1.1_1.1.1w-0+deb11u1_${OS_ARCH}.deb" && \
+    dpkg -i "libssl1.1_1.1.1w-0+deb11u1_${OS_ARCH}.deb" && \
+    rm -rf "libssl1.1_1.1.1w-0+deb11u1_${OS_ARCH}.deb"
 
 # Cleanup
 RUN apt-get autoremove --purge -y curl wget make && \
