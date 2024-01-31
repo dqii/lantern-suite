@@ -2,6 +2,11 @@ name: publish-docker
 on:
   workflow_dispatch:
     inputs:
+      VERSION:
+        type: string
+        description: "Lantern Suite version to tag"
+        required: true
+        default: "1"
       IMAGE_NAME:
         type: string
         description: "Container image name to tag"
@@ -46,3 +51,4 @@ jobs:
           tags: |
             ${{ (matrix.postgres == 15 && format('{0}:latest', github.event.inputs.IMAGE_NAME) || '') }}
             ${{ github.event.inputs.IMAGE_NAME }}:latest-pg${{ matrix.postgres }}
+            ${{ github.event.inputs.IMAGE_NAME }}:${{ github.event.inputs.VERSION }}-pg${{ matrix.postgres }}
