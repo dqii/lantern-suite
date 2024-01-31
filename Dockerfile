@@ -25,7 +25,6 @@ RUN cd /tmp && \
 
 # Setup rust
 RUN cd /tmp && \
-    LANTERN_EXTRAS_VERSION=$(curl -s "https://api.github.com/repos/lanterndata/lantern_extras/releases/latest" | jq ".tag_name" | sed 's/"//g') && \
     curl -k -o /tmp/rustup.sh https://sh.rustup.rs && \
     chmod +x /tmp/rustup.sh && \
     /tmp/rustup.sh -y && \
