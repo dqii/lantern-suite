@@ -6,12 +6,22 @@ on:
         type: string
         description: "Lantern Suite version to tag"
         required: true
-        default: "1"
+        default: "2"
       IMAGE_NAME:
         type: string
         description: "Container image name to tag"
         required: true
         default: "lanterndata/lantern-suite"
+      LANTERN_VERSION:
+        type: string
+        description: "Lantern version to build"
+        required: true
+        default: "0.1.1"
+      LANTERN_EXTRAS_VERSION:
+        type: string
+        description: "Lantern Extras version to build"
+        required: true
+        default: "0.1.0"
 jobs:
   ubuntu:
     runs-on: ubuntu-22.04
