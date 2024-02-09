@@ -56,6 +56,8 @@ jobs:
           push: true
           build-args: |
             PG_VERSION=${{ matrix.postgres }}
+            LANTERN_VERSION=${{ github.event.inputs.LANTERN_VERSION }}
+            LANTERN_EXTRAS_VERSION=${{ github.event.inputs.LANTERN_EXTRAS_VERSION }}
           # the :latest tag will refer to pg15 version
           # but we will also include :latest-pg$v tag
           tags: |
