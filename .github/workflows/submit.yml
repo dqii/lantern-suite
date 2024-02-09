@@ -69,18 +69,16 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
+          files: |
+            ./Dockerfile
           tag_name: ${{ github.event.inputs.VERSION }}
-          release_name: ${{ github.event.inputs.IMAGE_NAME }} Release ${{ github.event.inputs.VERSION }}
+          release_name: ${{ github.event.inputs.VERSION }}
           body: |
-            Release of ${{ github.event.inputs.IMAGE_NAME }} version ${{ github.event.inputs.VERSION }}.
-            
-            Includes:
-            - Lantern version ${{ github.event.inputs.LANTERN_VERSION }}
-            - Lantern Extras version ${{ github.event.inputs.LANTERN_EXTRAS_VERSION }}
-            - PostgreSQL versions: 12, 13, 14, 15, 16
+            Lantern Suite version ${{ github.event.inputs.VERSION }}
+            - Lantern ${{ github.event.inputs.LANTERN_VERSION }}
+            - Lantern Extras ${{ github.event.inputs.LANTERN_EXTRAS_VERSION }}
+            - Postgres versions: 12, 13, 14, 15, 16
           draft: false
           prerelease: false
