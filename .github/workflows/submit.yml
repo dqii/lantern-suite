@@ -57,9 +57,6 @@ jobs:
             PG_VERSION=${{ matrix.postgres }}
             LANTERN_VERSION=${{ github.event.inputs.LANTERN_VERSION }}
             LANTERN_EXTRAS_VERSION=${{ github.event.inputs.LANTERN_EXTRAS_VERSION }}
-          # the :latest tag will refer to pg15 version
-          # but we will also include :latest-pg$v tag
           tags: |
-            ${{ (matrix.postgres == 15 && format('{0}:latest', github.event.inputs.IMAGE_NAME) || '') }}
-            ${{ github.event.inputs.IMAGE_NAME }}:latest-pg${{ matrix.postgres }}
-            ${{ github.event.inputs.IMAGE_NAME }}:${{ github.event.inputs.VERSION }}-pg${{ matrix.postgres }}
+            ${{ github.event.inputs.IMAGE_NAME }}:pg${{ matrix.postgres }}-latest
+            ${{ github.event.inputs.IMAGE_NAME }}:pg${{ matrix.postgres }}-${{ github.event.inputs.VERSION }}
