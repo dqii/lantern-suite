@@ -1,4 +1,4 @@
-name: publish-docker
+name: publish
 on:
   workflow_dispatch:
     inputs:
@@ -6,14 +6,24 @@ on:
         type: string
         description: "Lantern Suite version to tag"
         required: true
-        default: "1"
+        default: "3"
       IMAGE_NAME:
         type: string
         description: "Container image name to tag"
         required: true
         default: "lanterndata/lantern-suite"
+      LANTERN_VERSION:
+        type: string
+        description: "Lantern version to build"
+        required: true
+        default: "0.1.1"
+      LANTERN_EXTRAS_VERSION:
+        type: string
+        description: "Lantern Extras version to build"
+        required: true
+        default: "0.1.1"
 jobs:
-  ubuntu:
+  docker:
     runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
@@ -24,7 +34,6 @@ jobs:
           - postgres: 14
           - postgres: 13
           - postgres: 12
-          - postgres: 11
     steps:
       - uses: actions/checkout@v4
         with:
@@ -46,9 +55,32 @@ jobs:
           push: true
           build-args: |
             PG_VERSION=${{ matrix.postgres }}
+            LANTERN_VERSION=${{ github.event.inputs.LANTERN_VERSION }}
+            LANTERN_EXTRAS_VERSION=${{ github.event.inputs.LANTERN_EXTRAS_VERSION }}
           # the :latest tag will refer to pg15 version
           # but we will also include :latest-pg$v tag
           tags: |
             ${{ (matrix.postgres == 15 && format('{0}:latest', github.event.inputs.IMAGE_NAME) || '') }}
             ${{ github.event.inputs.IMAGE_NAME }}:latest-pg${{ matrix.postgres }}
             ${{ github.event.inputs.IMAGE_NAME }}:${{ github.event.inputs.VERSION }}-pg${{ matrix.postgres }}
+
+  create-release:
+    needs: docker
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.event.inputs.VERSION }}
+          release_name: ${{ github.event.inputs.IMAGE_NAME }} Release ${{ github.event.inputs.VERSION }}
+          body: |
+            Release of ${{ github.event.inputs.IMAGE_NAME }} version ${{ github.event.inputs.VERSION }}.
+            
+            Includes:
+            - Lantern version ${{ github.event.inputs.LANTERN_VERSION }}
+            - Lantern Extras version ${{ github.event.inputs.LANTERN_EXTRAS_VERSION }}
+            - PostgreSQL versions: 12, 13, 14, 15, 16
+          draft: false
+          prerelease: false
