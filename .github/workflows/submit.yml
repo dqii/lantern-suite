@@ -72,7 +72,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.event.inputs.VERSION }}
-          release_name: ${{ github.event.inputs.VERSION }}
+          name: ${{ github.event.inputs.VERSION }}
           body: |
             Lantern Suite version ${{ github.event.inputs.VERSION }}
             - Lantern ${{ github.event.inputs.LANTERN_VERSION }}
