@@ -59,4 +59,4 @@ jobs:
             LANTERN_EXTRAS_VERSION=${{ github.event.inputs.LANTERN_EXTRAS_VERSION }}
           tags: |
             ${{ github.event.inputs.IMAGE_NAME }}:pg${{ matrix.postgres }}-latest
-            ${{ github.event.inputs.IMAGE_NAME }}:pg${{ matrix.postgres }}-${{ github.event.inputs.VERSION }}
+            ${{ github.event.inputs.IMAGE_NAME }}:pg${{ matrix.postgres }}-v${{ github.event.inputs.VERSION }}
