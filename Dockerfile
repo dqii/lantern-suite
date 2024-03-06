@@ -7,7 +7,7 @@ ARG PG_VERSION
 ARG TARGETARCH
 ENV OS_ARCH="${TARGETARCH:-amd64}"
 
-RUN apt update && apt install -y curl wget make jq
+RUN apt update && apt install -y curl wget make jq pgbouncer
 
 # Install Lantern
 RUN cd /tmp && \
@@ -51,3 +51,6 @@ RUN cd /tmp && \
 RUN apt-get autoremove --purge -y curl wget make && \
     apt-get update && apt-get upgrade -y && \
     apt-get clean && rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+COPY *.sql /docker-entrypoint-initdb.d/
+COPY *.sh /docker-entrypoint-initdb.d/
