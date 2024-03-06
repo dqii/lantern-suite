@@ -16,14 +16,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-  init-extensions:
-    image: postgres:15
-    command: "psql 'postgres://postgres@%2Fvar%2Frun%2Fpostgresql/postgres' -c 'CREATE EXTENSION IF NOT EXISTS lantern; CREATE EXTENSION IF NOT EXISTS lantern_extras;'"
-    volumes:
-      - "pg-socket-dir:/var/run/postgresql"
-    depends_on:
-      postgresql:
-        condition: service_healthy
   http_server:
     image: lanterndata/lantern-cli:latest-cpu
     ports:
@@ -32,8 +24,8 @@ services:
       - "pg-socket-dir:/var/run/postgresql"
     command: "start-server --host 0.0.0.0 --port 8080 --db-uri 'postgres://postgres@%2Fvar%2Frun%2Fpostgresql/postgres'"
     depends_on:
-      init-extensions:
-        condition: service_completed_successfully
+      postgresql:
+        condition: service_healthy
 
 volumes:
   lantern-suite-data:
