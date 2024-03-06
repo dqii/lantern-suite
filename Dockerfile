@@ -9,7 +9,7 @@ ARG PG_VERSION
 ARG TARGETARCH
 ENV OS_ARCH="${TARGETARCH:-amd64}"
 
-RUN apt update && apt install -y curl wget make jq pgbouncer
+RUN apt update && apt install -y curl wget make jq pgbouncer procps bc
 
 # Install Lantern
 RUN cd /tmp && \
