@@ -6,7 +6,7 @@ on:
         type: string
         description: "Lantern Suite version to tag"
         required: true
-        default: "4"
+        default: "5"
       IMAGE_NAME:
         type: string
         description: "Container image name to tag"
@@ -21,7 +21,7 @@ on:
         type: string
         description: "Lantern Extras version to build"
         required: true
-        default: "0.1.3"
+        default: "0.1.4"
 jobs:
   docker:
     runs-on: ubuntu-22.04
