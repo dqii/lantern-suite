@@ -17,11 +17,12 @@ services:
       timeout: 5s
       retries: 5
   http_server:
-    image: lanterndata/lantern-cli:latest-cpu
+    image: lanterndata/lantern-cli:0.1.4-cpu
     ports:
       - "8080:8080"
     volumes:
       - "pg-socket-dir:/var/run/postgresql"
+      - "lantern-suite-data:/var/lib/postgresql/data"
     command: "start-server --host 0.0.0.0 --port 8080 --db-uri 'postgres://postgres@%2Fvar%2Frun%2Fpostgresql/postgres'"
     depends_on:
       postgresql:
