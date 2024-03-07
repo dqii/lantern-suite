@@ -59,9 +59,16 @@ total_ram=$(free -tk | awk 'NR == 2 {print $2}')
 
 # Calculate 80% of the total RAM in kilobytes
 shared_buffers_kb=$(echo "$total_ram * 0.80" | bc)
+# Calculate 2% of the total RAM in kilobytes
+work_mem_kb=$(echo "$total_ram * 0.02" | bc)
 
 # Convert kilobytes to megabytes
 shared_buffers_mb=$(echo "scale=0; $shared_buffers_kb / 1024" | bc)
+work_mem_mb=$(echo "scale=0; $work_mem_kb / 1024" | bc)
 postgresql_set_property "shared_buffers" "${shared_buffers_mb}MB"
 postgresql_set_property "effective_cache_size" "${shared_buffers_mb}MB"
+if [ "$work_mem_mb" -gt "64" ]; then
+  postgresql_set_property "work_mem" "${work_mem_mb}MB"
+  echo "Set work_mem to ${work_mem_mb}MB"
+fi
 echo "Set shared_buffers and effective_cache_size to ${shared_buffers_mb}MB"
