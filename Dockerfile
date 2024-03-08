@@ -56,8 +56,8 @@ RUN apt-get autoremove --purge -y curl wget make && \
 
 COPY entrypoint/* /docker-entrypoint-initdb.d/
 COPY scripts/*.sh /opt
+COPY docker-entrypoint.sh /usr/local/bin/
 
 USER postgres
 EXPOSE 5432
 EXPOSE 6432
-CMD ["/opt/run-postgres.sh"]

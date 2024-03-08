@@ -26,8 +26,6 @@ auth_type = hba
 auth_user = postgres
 auth_file = userlist.txt
 auth_hba_file = /var/lib/postgresql/data/pg_hba.conf
-pidfile= pidfile.txt
-
 unix_socket_dir = /var/run/postgresql
 pidfile = pgbouncer.pid
 admin_users = postgres
