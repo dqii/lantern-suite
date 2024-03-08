@@ -1,5 +1,15 @@
 #!/bin/bash
 
+ready_counter=20
+while ! pg_isready; do
+    sleep 1
+    ready_counter=$((ready_counter - 1))
+    if ((ready_counter <= 0)); then
+        echo "PostgreSQL is not ready after 20 seconds"
+        exit 1
+    fi
+done
+
 cd /tmp
 psql -Atq -U postgres -d postgres -c "SELECT concat('\"', usename, '\" \"', passwd, '\"') FROM pg_shadow" > userlist.txt
 
@@ -12,12 +22,13 @@ cat <<EOF > pgbouncer.ini
 # Connection settings
 listen_addr = *
 listen_port = 6432
-auth_type = scram-sha-256
+auth_type = hba
 auth_user = postgres
 auth_file = userlist.txt
+auth_hba_file = /var/lib/postgresql/data/pg_hba.conf
 pidfile= pidfile.txt
 
-logfile = pgbouncer.log
+unix_socket_dir = /var/run/postgresql
 pidfile = pgbouncer.pid
 admin_users = postgres
 stats_users = postgres
@@ -34,5 +45,4 @@ query_wait_timeout = 60
 client_login_timeout = 60
 EOF
 
-pgbouncer -d pgbouncer.ini
-echo "Done initalizing pgbouncer"
+echo "Done configuring pgbouncer"

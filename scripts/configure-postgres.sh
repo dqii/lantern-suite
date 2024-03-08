@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 POSTGRESQL_CONF_FILE="/var/lib/postgresql/data/postgresql.conf"
 ########################
