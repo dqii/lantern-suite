@@ -6,7 +6,7 @@ on:
         type: string
         description: "Lantern Suite version to tag"
         required: true
-        default: "5"
+        default: "6"
       IMAGE_NAME:
         type: string
         description: "Container image name to tag"
