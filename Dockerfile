@@ -54,5 +54,10 @@ RUN apt-get autoremove --purge -y curl wget make && \
     apt-get update && apt-get upgrade -y && \
     apt-get clean && rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
-COPY *.sql /docker-entrypoint-initdb.d/
-COPY *.sh /docker-entrypoint-initdb.d/
+COPY entrypoint/* /docker-entrypoint-initdb.d/
+COPY scripts/*.sh /opt
+
+USER postgres
+EXPOSE 5432
+EXPOSE 6432
+CMD ["/opt/run-postgres.sh"]
