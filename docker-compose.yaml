@@ -4,7 +4,7 @@ services:
   postgresql:
     build: ./
     ports:
-      - "5433:5432"
+      - "5432:5432"
       - "6432:6432"
     volumes:
       - "lantern-suite-data:/var/lib/postgresql/data"
@@ -17,7 +17,7 @@ services:
       timeout: 5s
       retries: 5
   http_server:
-    image: lanterndata/lantern-cli:0.1.4-cpu
+    image: lanterndata/lantern-cli:0.1.9-cpu
     ports:
       - "8080:8080"
     volumes:
