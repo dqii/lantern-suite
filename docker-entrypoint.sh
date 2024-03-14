@@ -254,7 +254,7 @@ pg_setup_hba_conf() {
 			printf '# warning trust is enabled for all connections\n'
 			printf '# see https://www.postgresql.org/docs/12/auth-trust.html\n'
 		fi
-		printf 'host all all all %s\n' "$POSTGRES_HOST_AUTH_METHOD"
+		printf 'host all all 0.0.0.0/0 %s\n' "$POSTGRES_HOST_AUTH_METHOD"
 	} >> "$PGDATA/pg_hba.conf"
 }
 

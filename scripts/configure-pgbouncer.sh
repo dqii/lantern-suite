@@ -34,7 +34,6 @@ pool_mode = session
 ignore_startup_parameters = extra_float_digits
 max_client_conn = 2000
 default_pool_size = 10
-reserve_pool_timeout = 3
 server_lifetime = 300
 server_idle_timeout = 120
 server_connect_timeout = 5
