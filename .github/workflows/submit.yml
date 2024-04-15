@@ -6,7 +6,7 @@ on:
         type: string
         description: "Lantern Suite version to tag"
         required: true
-        default: "8"
+        default: "9"
       IMAGE_NAME:
         type: string
         description: "Container image name to tag"
@@ -16,7 +16,7 @@ on:
         type: string
         description: "Lantern version to build"
         required: true
-        default: "0.2.0"
+        default: "0.2.4"
       LANTERN_EXTRAS_VERSION:
         type: string
         description: "Lantern Extras version to build"
