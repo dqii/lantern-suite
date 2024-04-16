@@ -11,7 +11,7 @@ ARG TARGETARCH
 ARG PG_CRON_VERSION
 ENV OS_ARCH="${TARGETARCH:-amd64}"
 
-RUN apt update && apt install -y curl wget make jq pgbouncer procps bc
+RUN apt update && apt install -y curl wget make jq pgbouncer procps bc git-all
 
 # Install pg_cron
 RUN git clone https://github.com/citusdata/pg_cron.git /tmp/pg_cron && \
