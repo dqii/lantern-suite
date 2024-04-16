@@ -2,6 +2,33 @@
 set -euo pipefail
 
 POSTGRESQL_CONF_FILE="/var/lib/postgresql/data/postgresql.conf"
+
+########################
+# Update the shared_preload_libraries configuration
+# Globals:
+#   POSTGRESQL_*
+# Arguments:
+#   $1 - library to add
+#   $2 - Path to configuration file (default: $POSTGRESQL_CONF_FILE)
+# Returns:
+#   None
+#########################
+postgresql_update_shared_preload_libraries() {
+    local -r library="${1:?missing library}"
+    local -r conf_file="${2:-$POSTGRESQL_CONF_FILE}"
+    local libraries
+
+    if grep -qE "^shared_preload_libraries" "$conf_file"; then
+        libraries=$(sed -E "s/^shared_preload_libraries\s*=\s*'(.*)'/\1/" "$conf_file")
+        if [[ " $libraries " != *" $library "* ]]; then
+            libraries="$libraries, $library"
+            replace_in_file "$conf_file" "^shared_preload_libraries\s*=.*" "shared_preload_libraries = '$libraries'" false
+        fi
+    else
+        echo "shared_preload_libraries = '$library'" >> "$conf_file"
+    fi
+}
+
 ########################
 # Replace a regex-matching string in a file
 # Arguments:
@@ -73,3 +100,6 @@ if [ "$work_mem_mb" -gt "64" ]; then
   echo "Set work_mem to ${work_mem_mb}MB"
 fi
 echo "Set shared_buffers and effective_cache_size to ${shared_buffers_mb}MB"
+
+# Enable pg_cron
+postgresql_update_shared_preload_libraries "pg_cron"
