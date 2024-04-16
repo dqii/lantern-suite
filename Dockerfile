@@ -18,7 +18,8 @@ RUN git clone https://github.com/citusdata/pg_cron.git /tmp/pg_cron && \
     cd /tmp/pg_cron && \
     git checkout ${PG_CRON_VERSION} && \
     make -j && \
-    make install
+    make install && \
+    echo "shared_preload_libraries = 'pg_cron'" >> /var/lib/postgresql/data/postgresql.conf
 
 # Install Lantern
 RUN cd /tmp && \
