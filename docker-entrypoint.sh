@@ -322,6 +322,7 @@ _main() {
 
 			docker_init_database_dir
 			pg_setup_hba_conf "$@"
+      . /opt/configure-postgres.sh
 
 			# PGPASSWORD is required for psql when authentication is required for 'local' connections via pg_hba.conf and is otherwise harmless
 			# e.g. when '--auth=md5' or '--auth-local=md5' is used in POSTGRES_INITDB_ARGS
@@ -340,6 +341,7 @@ _main() {
 
 			EOM
 		else
+      . /opt/configure-postgres.sh
 			cat <<-'EOM'
 
 				PostgreSQL Database directory appears to contain a database; Skipping initialization
@@ -347,9 +349,8 @@ _main() {
 			EOM
 		fi
 	fi
-
   /bin/bash /opt/run-pgbouncer.sh &
-  . /opt/configure-postgres.sh
+  
 	exec "$@"
 }
 
