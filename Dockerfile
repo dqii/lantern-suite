@@ -1,15 +1,24 @@
 ARG PG_VERSION=15
 ARG LANTERN_VERSION=0.2.0
 ARG LANTERN_EXTRAS_VERSION=0.1.3
+ARG PG_CRON_VERSION="7e91e72b1bebc5869bb900d9253cc9e92518b33f"
 
 FROM postgres:$PG_VERSION-bookworm
 ARG LANTERN_VERSION
 ARG LANTERN_EXTRAS_VERSION
 ARG PG_VERSION
 ARG TARGETARCH
+ARG PG_CRON_VERSION
 ENV OS_ARCH="${TARGETARCH:-amd64}"
 
 RUN apt update && apt install -y curl wget make jq pgbouncer procps bc
+
+# Install pg_cron
+RUN git clone https://github.com/citusdata/pg_cron.git /tmp/pg_cron && \
+    cd /tmp/pg_cron && \
+    git checkout ${PG_CRON_VERSION} && \
+    make -j && \
+    make install
 
 # Install Lantern
 RUN cd /tmp && \
