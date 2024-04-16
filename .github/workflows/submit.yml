@@ -1,32 +1,14 @@
 name: publish
 on:
-  workflow_dispatch:
-    inputs:
-      VERSION:
-        type: string
-        description: "Lantern Suite version to tag"
-        required: true
-        default: "0.1.12"
-      IMAGE_NAME:
-        type: string
-        description: "Container image name to tag"
-        required: true
-        default: "lanterndata/lantern-suite"
-      LANTERN_VERSION:
-        type: string
-        description: "Lantern version to build"
-        required: true
-        default: "0.2.4"
-      LANTERN_EXTRAS_VERSION:
-        type: string
-        description: "Lantern Extras version to build"
-        required: true
-        default: "0.1.4"
-      PG_CRON_VERSION:
-        type: string
-        description: "pg_cron version to build"
-        required: true
-        default: "7e91e72b1bebc5869bb900d9253cc9e92518b33f"
+  push:
+    branches:
+      - main
+env:
+  VERSION: "0.1.12"
+  IMAGE_NAME: "lanterndata/lantern-suite"
+  LANTERN_VERSION: "0.2.4"
+  LANTERN_EXTRAS_VERSION: "0.1.4"
+  PG_CRON_VERSION: "7e91e72b1bebc5869bb900d9253cc9e92518b33f"
 jobs:
   docker:
     runs-on: ubuntu-22.04
@@ -60,9 +42,9 @@ jobs:
           push: true
           build-args: |
             PG_VERSION=${{ matrix.postgres }}
-            LANTERN_VERSION=${{ github.event.inputs.LANTERN_VERSION }}
-            LANTERN_EXTRAS_VERSION=${{ github.event.inputs.LANTERN_EXTRAS_VERSION }}
-            PG_CRON_VERSION=${{ github.event.inputs.PG_CRON_VERSION }}
+            LANTERN_VERSION=${{ env.LANTERN_VERSION }}
+            LANTERN_EXTRAS_VERSION=${{ env.LANTERN_EXTRAS_VERSION }}
+            PG_CRON_VERSION=${{ env.PG_CRON_VERSION }}
           tags: |
-            ${{ github.event.inputs.IMAGE_NAME }}:pg${{ matrix.postgres }}-latest
-            ${{ github.event.inputs.IMAGE_NAME }}:pg${{ matrix.postgres }}-v${{ github.event.inputs.VERSION }}
+            ${{ env.IMAGE_NAME }}:pg${{ matrix.postgres }}-latest
+            ${{ env.IMAGE_NAME }}:pg${{ matrix.postgres }}-v${{ env.VERSION }}
