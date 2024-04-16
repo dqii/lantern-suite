@@ -22,7 +22,7 @@ postgresql_update_shared_preload_libraries() {
         libraries=$(sed -E "s/^shared_preload_libraries\s*=\s*'(.*)'/\1/" "$conf_file")
         if [[ " $libraries " != *" $library "* ]]; then
             libraries="$libraries, $library"
-            replace_in_file "$conf_file" "^shared_preload_libraries\s*=.*" "shared_preload_libraries = '$libraries'" false
+            replace_in_file "$conf_file" "^shared_preload_libraries\s*=.*" "shared_preload_libraries = '\$libraries'" false
         fi
     else
         echo "shared_preload_libraries = '$library'" >> "$conf_file"
