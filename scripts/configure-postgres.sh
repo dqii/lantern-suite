@@ -102,3 +102,6 @@ echo "Set shared_buffers and effective_cache_size to ${shared_buffers_mb}MB"
 
 # Enable pg_cron
 postgresql_update_shared_preload_libraries "pg_cron"
+
+# Enable pg_stat_statements
+postgresql_update_shared_preload_libraries "pg_stat_statements"
