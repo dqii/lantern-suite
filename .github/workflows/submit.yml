@@ -4,9 +4,9 @@ on:
     branches:
       - main
 env:
-  VERSION: "0.1.17"
+  VERSION: "0.1.18"
   IMAGE_NAME: "lanterndata/lantern-suite"
-  LANTERN_VERSION: "0.2.5"
+  LANTERN_VERSION: "0.2.6"
   LANTERN_EXTRAS_VERSION: "0.1.5"
   PG_CRON_VERSION: "7e91e72b1bebc5869bb900d9253cc9e92518b33f"
 jobs:
