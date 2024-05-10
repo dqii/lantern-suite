@@ -42,7 +42,10 @@ RUN cd /tmp && \
 RUN cd /tmp && \
     ONNX_VERSION="1.16.1" && \
     PACKAGE_URL="https://github.com/microsoft/onnxruntime/releases/download/v${ONNX_VERSION}/onnxruntime-linux-x64-${ONNX_VERSION}.tgz" && \
-    if [[ $OS_ARCH == *"arm"* ]]; then PACKAGE_URL="https://github.com/microsoft/onnxruntime/releases/download/v${ONNX_VERSION}/onnxruntime-linux-aarch64-${ONNX_VERSION}.tgz"; fi && \
+    case "$OS_ARCH" in \
+        arm*|aarch64) \
+            PACKAGE_URL="https://github.com/microsoft/onnxruntime/releases/download/v${ONNX_VERSION}/onnxruntime-linux-aarch64-${ONNX_VERSION}.tgz"; \
+    esac && \
     mkdir -p /usr/local/lib && \
     cd /usr/local/lib && \
     wget $PACKAGE_URL && \
