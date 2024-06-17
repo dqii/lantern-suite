@@ -1,4 +1,4 @@
-count=$(psql -h postgresql -U postgres -t -A -c "SELECT COUNT(*) FROM pg_available_extensions WHERE name IN ('lantern', 'lantern_extras', 'pg_cron', 'pg_stat_statements');")
+count=$(PGPASSWORD=postgres psql -h lantern -U postgres -t -A -c "SELECT COUNT(*) FROM pg_available_extensions WHERE name IN ('lantern', 'lantern_extras', 'pg_cron', 'pg_stat_statements');")
 echo "Count: $count"
 if echo "$count" | grep -q "ERROR"; then
   echo "Failed to retrieve extension count" && exit 1
