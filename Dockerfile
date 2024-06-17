@@ -1,6 +1,6 @@
 ARG PG_VERSION=15
-ARG LANTERN_VERSION=0.2.0
-ARG LANTERN_EXTRAS_VERSION=0.1.3
+ARG LANTERN_VERSION=0.2.5
+ARG LANTERN_EXTRAS_VERSION=0.1.5
 ARG PG_CRON_VERSION="7e91e72b1bebc5869bb900d9253cc9e92518b33f"
 
 FROM postgres:$PG_VERSION-bookworm
@@ -42,7 +42,10 @@ RUN cd /tmp && \
 RUN cd /tmp && \
     ONNX_VERSION="1.16.1" && \
     PACKAGE_URL="https://github.com/microsoft/onnxruntime/releases/download/v${ONNX_VERSION}/onnxruntime-linux-x64-${ONNX_VERSION}.tgz" && \
-    if [[ $OS_ARCH == *"arm"* ]]; then PACKAGE_URL="https://github.com/microsoft/onnxruntime/releases/download/v${ONNX_VERSION}/onnxruntime-linux-aarch64-${ONNX_VERSION}.tgz"; fi && \
+    case "$OS_ARCH" in \
+        arm*|aarch64) \
+            PACKAGE_URL="https://github.com/microsoft/onnxruntime/releases/download/v${ONNX_VERSION}/onnxruntime-linux-aarch64-${ONNX_VERSION}.tgz"; \
+    esac && \
     mkdir -p /usr/local/lib && \
     cd /usr/local/lib && \
     wget $PACKAGE_URL && \
