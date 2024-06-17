@@ -20,7 +20,13 @@ RUN git clone https://github.com/citusdata/pg_cron.git /tmp/pg_cron && \
     make -j && \
     make install
 
-# Install Lantern
+    # Install pgvector
+RUN git clone --branch narek/array-to-sparsevec-casts https://github.com/Ngalstyan4/pgvector.git /tmp/pgvector && \
+    cd /tmp/pgvector && \
+    make && \
+    make install
+
+    # Install Lantern
 RUN cd /tmp && \
     wget https://github.com/lanterndata/lantern/releases/download/v${LANTERN_VERSION}/lantern-${LANTERN_VERSION}.tar -O lantern.tar && \
     tar xf lantern.tar && \
