@@ -4,7 +4,7 @@ on:
     branches:
       - main
 env:
-  VERSION: "0.2.0"
+  VERSION: "0.2.1"
   IMAGE_NAME: "lanterndata/lantern-suite"
   LANTERN_VERSION: "0.3.0"
   LANTERN_EXTRAS_VERSION: "0.2.2"
