@@ -1,9 +1,18 @@
-count=$(PGPASSWORD=postgres psql -h lantern -U postgres -t -A -c "SELECT COUNT(*) FROM pg_available_extensions WHERE name IN ('lantern', 'lantern_extras', 'pg_cron', 'pg_stat_statements', 'vector');")
-echo "Count: $count"
-if echo "$count" | grep -q "ERROR"; then
-  echo "Failed to retrieve extension count" && exit 1
-elif [ "$count" -ne 5 ]; then
-  echo "Extension check failed" && exit 1
+#!/bin/bash
+
+available_extensions=$(PGPASSWORD=postgres psql -h lantern -U postgres -t -A -c "SELECT name FROM pg_available_extensions WHERE name IN ('lantern', 'lantern_extras', 'pg_cron', 'pg_stat_statements', 'vector');")
+
+required_extensions=("lantern" "lantern_extras" "pg_cron" "pg_stat_statements" "vector")
+missing_extensions=()
+for ext in "${required_extensions[@]}"; do
+  if ! echo "$available_extensions" | grep -q "^${ext}$"; then
+    missing_extensions+=("$ext")
+  fi
+done
+
+if [ ${#missing_extensions[@]} -ne 0 ]; then
+  echo "Extension check failed. Missing extensions: ${missing_extensions[*]}"
+  exit 1
 else
   echo "Extension check passed"
 fi
