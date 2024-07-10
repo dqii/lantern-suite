@@ -14,7 +14,7 @@ services:
 
   test:
     image: lantern
-    command: ./test/extension-count.sh
+    command: ./test/run-all.sh
     volumes:
       - ./test:/test
     depends_on:

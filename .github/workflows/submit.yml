@@ -4,11 +4,8 @@ on:
     branches:
       - main
 env:
-  VERSION: "0.2.1"
+  VERSION: "0.2.2"
   IMAGE_NAME: "lanterndata/lantern-suite"
-  LANTERN_VERSION: "0.3.0"
-  LANTERN_EXTRAS_VERSION: "0.2.2"
-  PG_CRON_VERSION: "7e91e72b1bebc5869bb900d9253cc9e92518b33f"
 jobs:
   docker:
     runs-on: ubuntu-22.04
