@@ -64,6 +64,22 @@ RUN cd /tmp && \
     dpkg -i "libssl1.1_1.1.1w-0+deb11u1_${OS_ARCH}.deb" && \
     rm -rf "libssl1.1_1.1.1w-0+deb11u1_${OS_ARCH}.deb"
 
+# ZomboDB: Dependencies
+RUN apt update && apt install -y bison flex zlib1g zlib1g-dev libreadline-dev pkg-config
+
+# ZomboDB: Install Rust and cargo-pgrx
+# Note: Current version of pgrx is v0.11.4, but ZomboDB is only compatible with up to 0.9.8
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y && \
+    . "$HOME/.cargo/env" && \
+    cargo install cargo-pgrx --version 0.9.8 && \
+    cargo pgrx init --pg15=`which pg_config` && \
+    git clone https://github.com/zombodb/zombodb.git /tmp/zombodb
+
+# ZomboDB: Install ZomboDB
+RUN cd /tmp/zombodb && \
+    . "$HOME/.cargo/env" && \
+    cargo pgrx install --release
+
 # Cleanup
 RUN apt-get autoremove --purge -y curl wget make && \
     apt-get update && apt-get upgrade -y && \

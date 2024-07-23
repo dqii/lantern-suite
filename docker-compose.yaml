@@ -1,13 +1,13 @@
 version: "3"
 
 services:
-  postgresql:
+  postgres:
     build: ./
     ports:
       - "5432:5432"
       - "6432:6432"
     volumes:
-      - "lantern-suite-data:/var/lib/postgresql/data"
+      - "pg-data:/var/lib/postgresql/data"
       - "pg-socket-dir:/var/run/postgresql"
     environment:
       - "POSTGRES_HOST_AUTH_METHOD=trust"
@@ -16,20 +16,34 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-  http_server:
+
+  cli:
     image: lanterndata/lantern-cli:0.1.15-cpu
     ports:
       - "8080:8080"
     volumes:
       - "pg-socket-dir:/var/run/postgresql"
-      - "lantern-suite-data:/var/lib/postgresql/data"
+      - "pg-data:/var/lib/postgresql/data"
     command: "start-server --host 0.0.0.0 --port 8080 --db-uri 'postgres://postgres@%2Fvar%2Frun%2Fpostgresql/postgres'"
     depends_on:
-      postgresql:
+      postgres:
         condition: service_healthy
 
+  elastic:
+    image: elasticsearch:8.13.4
+    volumes:
+      - "elastic-data:/usr/share/elasticsearch/data"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - 9200:9200
+      - 9300:9300
+
 volumes:
-  lantern-suite-data:
+  pg-data:
     driver: local
   pg-socket-dir:
+    driver: local
+  elastic-data:
     driver: local

@@ -2,7 +2,7 @@
 
 PG_VERSION=15
 
-declare -a extensions=("lantern" "lantern_extras" "pg_cron" "pg_stat_statements" "vector")
+declare -a extensions=("lantern" "lantern_extras" "pg_cron" "pg_stat_statements" "vector" "zombodb")
 
 missing_files=()
 for ext in "${extensions[@]}"; do
