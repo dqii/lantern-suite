@@ -17,7 +17,7 @@ RUN git clone https://github.com/citusdata/pg_cron.git /tmp/pg_cron && \
     make -j && \
     make install
 
-    # Install pgvector
+# Install pgvector
 RUN git clone --branch narek/array-to-sparsevec-casts https://github.com/Ngalstyan4/pgvector.git /tmp/pgvector && \
     cd /tmp/pgvector && \
     make && \
