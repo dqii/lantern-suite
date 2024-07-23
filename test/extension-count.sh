@@ -1,6 +1,6 @@
 #!/bin/bash
 
-available_extensions=$(PGPASSWORD=postgres psql -h lantern -U postgres -t -A -c "SELECT name FROM pg_available_extensions WHERE name IN ('lantern', 'lantern_extras', 'pg_cron', 'pg_stat_statements', 'vector');")
+available_extensions=$(PGPASSWORD=postgres psql -U postgres -t -A -c "SELECT name FROM pg_available_extensions WHERE name IN ('lantern', 'lantern_extras', 'pg_cron', 'pg_stat_statements', 'vector');")
 
 required_extensions=("lantern" "lantern_extras" "pg_cron" "pg_stat_statements" "vector")
 missing_extensions=()
