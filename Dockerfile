@@ -1,7 +1,7 @@
 ARG PG_VERSION=15
 
 FROM postgres:$PG_VERSION-bookworm
-ARG LANTERN_VERSION=0.3.0
+ARG LANTERN_VERSION=0.3.2
 ARG LANTERN_EXTRAS_VERSION=0.2.3
 ARG PG_VERSION
 ARG TARGETARCH
@@ -18,9 +18,9 @@ RUN git clone https://github.com/citusdata/pg_cron.git /tmp/pg_cron && \
     make install
 
 # Install pgvector
-RUN git clone --branch narek/array-to-sparsevec-casts https://github.com/Ngalstyan4/pgvector.git /tmp/pgvector && \
+RUN git clone --branch v0.7.3-lanterncloud https://github.com/lanterndata/pgvector.git /tmp/pgvector && \
     cd /tmp/pgvector && \
-    make && \
+    make OPTFLAGS="" -j && \
     make install
 
     # Install Lantern
