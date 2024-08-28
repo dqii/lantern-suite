@@ -4,7 +4,7 @@ on:
     branches:
       - main
 env:
-  VERSION: "0.2.3"
+  VERSION: "0.2.4"
   IMAGE_NAME: "lanterndata/lantern-suite"
 jobs:
   docker:

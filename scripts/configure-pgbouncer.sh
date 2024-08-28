@@ -11,6 +11,24 @@ cd $PG_SOCKET_DIR
 check_cmd="pg_isready"
 ready_counter=$POSTGRESQL_INIT_MAX_TIMEOUT
 
+########################
+# Check if the provided argument is a boolean or is the string 'yes/true'
+# Arguments:
+#   $1 - Value to check
+# Returns:
+#   Boolean
+#########################
+is_boolean_yes() {
+    local -r bool="${1:-}"
+    # comparison is performed without regard to the case of alphabetic characters
+    shopt -s nocasematch
+    if [[ "$bool" = 1 || "$bool" =~ ^(yes|true)$ ]]; then
+        true
+    else
+        false
+    fi
+}
+
 generate_random_string() {
     local count="32"
     local filter
@@ -52,6 +70,18 @@ SQL
 
 psql -Atq -U postgres -d postgres -c "SELECT concat('\"', usename, '\" \"', passwd, '\"') FROM pg_shadow WHERE usename='_pgbouncer'" > userlist.txt
 
+auth_query='SELECT usename, passwd FROM pg_shadow WHERE usename=$1'
+
+if is_boolean_yes "${LANTERN_MULTI_TENANT:-no}"; then
+  psql -U postgres -h $PG_SOCKET_DIR -p $POSTGRESQL_PORT_NUMBER postgres -t <<SQL 
+    BEGIN;
+      CREATE TABLE IF NOT EXISTS _pgbouncer_auth(id SERIAL PRIMARY KEY, rolname NAME, dbname NAME);
+      GRANT SELECT ON _pgbouncer_auth TO _pgbouncer;
+    COMMIT;
+SQL
+auth_query='SELECT psh.usename, psh.passwd FROM pg_shadow psh INNER JOIN pg_user pgu ON pgu.usename=psh.usename LEFT JOIN _pgbouncer_auth auth ON auth.rolname=psh.usename WHERE psh.usename=$1 AND (pgu.usesuper=TRUE OR auth.dbname=$2);'
+fi
+
 cat <<EOF > pgbouncer.ini
 [pgbouncer]
 # Connection settings
@@ -62,7 +92,7 @@ auth_user = _pgbouncer
 auth_hba_file = $POSTGRESQL_PGHBA_FILE
 auth_file = userlist.txt
 unix_socket_dir = $PG_SOCKET_DIR
-auth_query = SELECT usename, passwd FROM pg_shadow WHERE usename=\$1
+auth_query = $auth_query
 auth_dbname = postgres
 
 pidfile = pgbouncer.pid
