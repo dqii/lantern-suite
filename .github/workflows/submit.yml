@@ -3,8 +3,9 @@ on:
   push:
     branches:
       - main
+    workflow_dispatch:
 env:
-  VERSION: "0.2.4"
+  VERSION: "0.2.5"
   IMAGE_NAME: "lanterndata/lantern-suite"
 jobs:
   docker:
