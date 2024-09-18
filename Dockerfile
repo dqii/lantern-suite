@@ -1,14 +1,14 @@
 ARG PG_VERSION=15
 
 FROM postgres:$PG_VERSION-bookworm
-ARG LANTERN_VERSION=0.3.3
+ARG LANTERN_VERSION=varik/external-index-router
 ARG LANTERN_EXTRAS_VERSION=0.2.3
 ARG PG_VERSION
 ARG TARGETARCH
 ARG PG_CRON_VERSION="7e91e72b1bebc5869bb900d9253cc9e92518b33f"
 ENV OS_ARCH="${TARGETARCH:-amd64}"
 
-RUN apt update && apt install -y curl wget make jq pgbouncer procps bc git-all gcc postgresql-server-dev-${PG_VERSION}
+RUN apt update && apt install -y curl wget make jq pgbouncer procps bc git-all gcc postgresql-server-dev-${PG_VERSION} cmake build-essential
 
 # Install pg_cron
 RUN git clone https://github.com/citusdata/pg_cron.git /tmp/pg_cron && \
@@ -23,14 +23,14 @@ RUN git clone --branch v0.7.3-lanterncloud https://github.com/lanterndata/pgvect
     make OPTFLAGS="" -j && \
     make install
 
-    # Install Lantern
+# Install Lantern
 RUN cd /tmp && \
-    wget https://github.com/lanterndata/lantern/releases/download/v${LANTERN_VERSION}/lantern-${LANTERN_VERSION}.tar -O lantern.tar && \
-    tar xf lantern.tar && \
-    cd lantern-${LANTERN_VERSION} && \
-    make install && \
+    git clone https://github.com/lanterndata/lantern.git -b $LANTERN_VERSION --recursive && \
+    cd lantern && mkdir build && cd build && \
+    cmake -DBUILD_FOR_DISTRIBUTING=1 .. && \
+    make install -j && \
     cd /tmp && \
-    rm -rf lantern*
+    rm -rf lantern
 
 # Install extras
 RUN cd /tmp && \
