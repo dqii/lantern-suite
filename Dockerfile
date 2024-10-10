@@ -1,8 +1,9 @@
 ARG PG_VERSION=15
 
 FROM postgres:$PG_VERSION-bookworm
-ARG LANTERN_VERSION=v0.3.4
-ARG LANTERN_EXTRAS_VERSION=0.2.3
+ARG LANTERN_VERSION=0.4.0
+ARG PGVECTOR_VERSION="v0.7.4-lanterncloud"
+ARG BUILD_FROM_SOURCE="no"
 ARG PG_VERSION
 ARG TARGETARCH
 ARG PG_CRON_VERSION="7e91e72b1bebc5869bb900d9253cc9e92518b33f"
@@ -17,29 +18,41 @@ RUN git clone https://github.com/citusdata/pg_cron.git /tmp/pg_cron && \
     make -j && \
     make install
 
-# Install pgvector
-RUN git clone --branch v0.7.3-lanterncloud https://github.com/lanterndata/pgvector.git /tmp/pgvector && \
+# Install PGVector
+RUN git clone https://github.com/lanterndata/pgvector.git --recursive -b ${PGVECTOR_VERSION} /tmp/pgvector && \
     cd /tmp/pgvector && \
+    # Set max ef_search to 50000
+    sed -i "s/#define HNSW_MAX_EF_SEARCH.*/#define HNSW_MAX_EF_SEARCH 50000/g" src/hnsw.h && \
+    # Make pgvector trusted extension
+    echo "trusted=true" >> vector.control && \
     make OPTFLAGS="" -j && \
-    make install
+    make OPTFLAGS="" install && \
+    rm -rf /tmp/pgvector
 
-# Install Lantern
+# Install lantern and lantern extras
 RUN cd /tmp && \
-    git clone https://github.com/lanterndata/lantern.git -b $LANTERN_VERSION --recursive && \
-    cd lantern && mkdir build && cd build && \
-    cmake -DBUILD_FOR_DISTRIBUTING=1 .. && \
-    make install -j && \
-    cd /tmp && \
-    rm -rf lantern
-
-# Install extras
-RUN cd /tmp && \
-    wget https://github.com/lanterndata/lantern_extras/releases/download/${LANTERN_EXTRAS_VERSION}/lantern-extras-${LANTERN_EXTRAS_VERSION}.tar -O lantern-extras.tar && \
-    tar xf lantern-extras.tar && \
-    cd lantern-extras-${LANTERN_EXTRAS_VERSION} && \
-    make install && \
-    cd /tmp && \
-    rm -rf lantern-extras*
+    case "$BUILD_FROM_SOURCE" in \
+        no|false|0) \
+            wget -q https://github.com/lanterndata/lantern/releases/download/v${LANTERN_VERSION}/lantern-${LANTERN_VERSION}.tar -O lantern.tar && \
+            tar xf lantern.tar && \
+            cd lantern-${LANTERN_VERSION} && \
+            make install && \
+            cd /tmp && \
+            rm -rf lantern* ;; \
+        *) \
+            curl https://sh.rustup.rs -sSf | sh -s -- -y && \
+            . "$HOME/.cargo/env" && \
+            apt install pkg-config libssl-dev -y && \
+            cargo install cargo-pgrx --version 0.11.3 && \
+            cargo pgrx init --pg15 /usr/bin/pg_config && \
+            git clone --recursive  https://github.com/lanterndata/lantern.git -b "v${LANTERN_VERSION}" && \
+            cd lantern && \
+            ORT_STRATEGY=system cargo pgrx install --release --pg-config /usr/bin/pg_config --package lantern_extras && \
+            cmake -S ./lantern_hnsw -B ./build -DBUILD_FOR_DISTRIBUTING=YES -DMARCH_NATIVE=OFF && \
+            make -C ./build install -j && \
+            rustup self uninstall -y && \
+            cd /tmp && rm -rf lantern* ;; \
+    esac
 
 # Setup onnxruntime for lantern extras
 RUN cd /tmp && \
