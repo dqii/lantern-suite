@@ -9,15 +9,15 @@ on:
         type: string
         description: "Image Version"
         required: true
-        default: "0.2.5"
+        default: "0.4.0"
       LANTERN_VERSION:
         type: string
         description: "Lantern Version"
         required: true
-        default: "0.3.4"
+        default: "0.4.0"
 env:
-  VERSION: ${{ github.event.inputs.VERSION || '0.2.5' }}
-  LANTERN_VERSION: ${{ github.event.inputs.LANTERN_VERSION || '0.3.4' }}
+  VERSION: ${{ github.event.inputs.VERSION || '0.4.0' }}
+  LANTERN_VERSION: ${{ github.event.inputs.LANTERN_VERSION || '0.4.0' }}
   IMAGE_NAME: "lanterndata/lantern-suite"
 jobs:
   docker:
